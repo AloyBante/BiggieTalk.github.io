@@ -1,0 +1,210 @@
+<?php
+session_start();
+?>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Binggie Talk</title>
+        <link rel="stylesheet" href="../css/login.css">
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <meta content="utf-8" http-equiv="encoding">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+        <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    </head>
+    <body>
+        <div class="login-reg-panel">
+            <div class="login-info-box">
+                <h2>Have an account?</h2>
+                <label id="label-register" for="log-reg-show">Login</label>
+                <input type="radio" name="active-log-panel" id="log-reg-show"  checked="checked">
+            </div>
+            
+            <div class="register-info-box">
+                <h2>Don't have an account?</h2>
+                <label id="label-login" for="log-login-show">Register</label>
+                <input type="radio" name="active-log-panel" id="log-login-show">
+            </div>
+            
+            <div class="white-panel">
+                <div class="login-show">
+                    <h2><img src="../images/logo.jpg" alt="Logo" style="width:65px;height:65px;display:inline"> BiggieTalk LOGIN</h2>
+                    <input id="login_userName" type="text" placeholder="Username">
+                    <input id="login_password" type="password" placeholder="Password">
+                    <input id="btnLogin" type="button" value="Login">
+                    <!-- <a href="">Forgot password?</a> -->
+                </div>
+                <div class="register-show">
+                    <h2 style="font-size:28px"><img src="../images/logo.jpg" alt="Logo" style="width:65px;height:65px;display:inline"> BiggieTalk REGISTER</h2>
+                    <input id="email" type="text" placeholder="Email Address">
+                    <input id="userName" type="text" placeholder="Username">
+                    <input id="password" type="password" placeholder="Password">
+                    <input id="password_confirm" type="password" placeholder="Confirm Password">
+                    <input id="btnRegister" type="button" value="Register">
+                </div>
+            </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript">
+         $(document).ready(function(){
+            initDb();
+            $('.login-info-box').fadeOut();
+            $('.login-show').addClass('show-log-panel');
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                startDate: '-3d'
+            });
+
+            $("#marital_status").change(function(){
+                $("#marital_status option:selected").text($("#marital_status").val());
+            });
+         });
+
+         function initDb(){
+            $.ajax({
+            type: "POST",
+            url: '../scripts/dbConnect.php',
+            success: function(response){
+                let result = JSON.parse(response)
+                if(result.success) {
+                    createTables()
+                }
+            },
+            error: function(xhr, status, error){
+                console.error(response);
+            }
+            });
+        }
+
+        function createTables(){
+            $.ajax({
+                type: "POST",
+                url: '../scripts/createTables.php',
+                success: function(response){
+                    let result = JSON.parse(response)
+                    if(result.success) {
+                        console.log(result.message);
+                    }
+                },
+                error: function(xhr, status, error){
+                    console.error(response);
+                }
+            });
+        }
+
+        $('.login-reg-panel input[type="radio"]').on('change', function() {
+            if($('#log-login-show').is(':checked')) {
+                $('.register-info-box').fadeOut();
+                $('.login-info-box').fadeIn();
+
+                $('.white-panel').addClass('right-log');
+                $('.register-show').addClass('show-log-panel');
+                $('.login-show').removeClass('show-log-panel');
+            }
+            else if($('#log-reg-show').is(':checked')) {
+                $('.register-info-box').fadeIn();
+                $('.login-info-box').fadeOut();
+        
+                $('.white-panel').removeClass('right-log');
+        
+                $('.login-show').addClass('show-log-panel');
+                $('.register-show').removeClass('show-log-panel');
+            }
+        });
+
+        $('#btnRegister').click(function() {
+            var userName = $('#userName').val();
+            var password = $('#password').val();
+            var passwordConfirm = $('#password_confirm').val();
+            var email = $('#email').val();
+            $.ajax({
+                type: "POST",
+                url: '../scripts/crud.php',
+                data: {
+                    'register': 1,
+                    'userName': userName, 'password': password, 'email': email
+                },
+                success: function(response){
+                    let result = JSON.parse(response)
+                    if(result.success) {
+                        clearFields2();
+                        $('.register-info-box').fadeOut();
+                        $('.login-info-box').fadeIn();
+                        swal({
+                            title: "Success!",
+                            text: result.message,
+                            icon: "success",
+                            });
+                        } else {
+                            swal({
+                                title: "Error",
+                                text: result.message,
+                                icon: "error",
+                            });
+                        }
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+            });
+        });
+
+        $('#btnLogin').click(function() {
+            var userName = $('#login_userName').val();
+            var password = $('#login_password').val();
+
+            $.ajax({
+                type: "POST",
+                url: '../scripts/crud.php',
+                data: {
+                    'login': 1,
+                    'userName': userName, 'password': password
+                },
+                success: function(response){
+                    let result = JSON.parse(response)
+                    if(result.success) {
+                        localStorage.setItem("userName", userName);
+                        //console.log(window.localStorage.getItem('userName'));
+                        window.location.href = '../myWebsite/index.html'
+                        clearFields();
+                        $('.register-info-box').fadeOut();
+                        $('.login-info-box').fadeIn();
+                        swal({
+                            title: "Success!",
+                            text: result.message,
+                            icon: "success",
+                        });
+                    } else {
+                        swal({
+                            title: "Error",
+                            text: result.message,
+                            icon: "error",
+                        });
+                    }
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+            });
+            
+        })
+
+        function clearFields(){
+            $('#login_userName').val('');
+            $('#login_password').val('');
+        }
+	function clearFields2(){
+            $('#userName').val('');
+            $('#password').val('');
+	    $('#password_confirm').val('');
+            $('#email').val('');
+        }
+    </script>
+</html>

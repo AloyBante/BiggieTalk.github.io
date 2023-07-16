@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>BiggieTalk</title>
+        <meta charset="utf-8">
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <meta content="utf-8" http-equiv="encoding">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+        <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <link rel="stylesheet" href="../css/payroll.css">
+    </head>
+    <body>
+        <div class="vertical-center">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="align-middle">
+                        <h2><img src="../images/logo.jpg" alt="Logo" style="width:65px;height:65px;display:inline"> BiggieTalk Payroll</h2>
+                        <div class="input-group">
+                            <input id="payrollSearch" type="search" class="form-control rounded" placeholder="Search Employee Id" aria-label="Search" aria-describedby="search-addon" />&nbsp;
+                            <button id="btnSearchPayroll" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>&nbsp;
+                        </div><br/>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <h5>Period: </h5>
+                                </div>
+                                <div class="col-sm-5">
+                                    <input class="form-control datepicker" id="monthFrom" type="text" placeholder="From: yyyy-mm-dd">
+                                </div>
+                                <div class="col-sm-5">
+                                    <input class="form-control datepicker" id="monthTo" type="text" placeholder="To: yyyy-mm-dd">
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon">Employee ID</span>
+                                        </div>
+                                        <label id="empId" class="form-control" aria-describedby="basic-addon"></label>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">Employee Name</span>
+                                        </div>
+                                        <label id="empName" class="form-control" aria-describedby="basic-addon1"></label>
+                                    </div>
+                                    
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon2">Department</span>
+                                        </div>
+                                        <label id="dept" class="form-control" aria-describedby="basic-addon2"></label>
+                                    </div> 
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon3">Position</span>
+                                        </div>
+                                        <label id="pos" class="form-control" aria-describedby="basic-addon3"></label>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon5">Basic Salary</span>
+                                        </div>
+                                        <input id="basicSalary" type="number" class="form-control" placeholder="Basic Salary" aria-label="Basic Salary" aria-describedby="basic-addon4">
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon4">Days Worked</span>
+                                        </div>
+                                        <input id="daysWorked" type="number" class="form-control" readonly placeholder="Days Worked" aria-label="Days Worked" aria-describedby="basic-addon4">
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon6">Overtime Pay</span>
+                                        </div>
+                                        <input id="overTime" type="number" class="form-control" placeholder="Overtime Pay" aria-label="Overtime Pay" aria-describedby="basic-addon6">
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon7">Holiday Pay</span>
+                                        </div>
+                                        <input id="holidayPay" type="number" class="form-control" placeholder="Holiday Pay" aria-label="Holiday Pay" aria-describedby="basic-addon7">
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon8">Allowance</span>
+                                        </div>
+                                        <input id="allowance" type="number" class="form-control" placeholder="Allowance" aria-label="Allowance" aria-describedby="basic-addon8">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <h5>Deductions</h5>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon9">SSS</span>
+                                        </div>
+                                        <input id="sss" type="number" class="form-control" placeholder="SSS" aria-label="SSS" aria-describedby="basic-addon9">
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon10">PAG-IBIG</span>
+                                        </div>
+                                        <input id="pag-ibig" type="number" class="form-control" placeholder="PAG-IBIG" aria-label="PAG-IBIG" aria-describedby="basic-addon10">
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon11">Philhealth</span>
+                                        </div>
+                                        <input id="philHealth" type="number" class="form-control" placeholder="Philhealth" aria-label="Philhealth" aria-describedby="basic-addon11">
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon11">Others</span>
+                                        </div>
+                                        <input id="others" type="number" class="form-control" placeholder="Others" aria-label="Others" aria-describedby="basic-addon11">
+                                    </div>
+                                    <div class="pull-right">
+                                        <button id="btnCompute" type="button" class="btn btn-primary"><i class="fa fa-calculator"></i> Compute</button>
+                                    </div><br><br>
+                                    <h5>Total</h5>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon12">Gross Pay</span>
+                                        </div>
+                                        <label id="gross" class="form-control" aria-describedby="basic-addon12"></label>
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon13">Net Pay</span>
+                                        </div>
+                                        <label id="net" class="form-control" aria-describedby="basic-addon13"></label>
+                                    </div>
+                                    <div class="pull-right">
+                                        <button id="btnClearFields" type="button" class="btn btn-warning"><i class="fa fa-eraser"></i> Clear Fields</button>
+                                        <button id="btnSavePayroll" type="button" class="btn btn-success"><i class="fa fa-save"></i> Save</button>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            disableInputs();
+            $('#monthFrom').datepicker({
+                format: 'yyyy-mm-dd',
+                startDate: '-3d'
+            });
+
+            $('#monthTo').datepicker({
+                format: 'yyyy-mm-dd',
+                startDate: '-3d'
+            });
+        });
+
+        $('#btnSearchPayroll').click(function(){
+            var empId = $('#payrollSearch').val()
+            var monthFrom = $('#monthFrom').val();
+            var monthTo = $('#monthTo').val();
+            console.log(monthFrom + '  ' + monthTo)
+            if(!monthFrom || !monthTo){
+                swal({
+                    title: "Error",
+                    text: 'Select Payroll Period',
+                    icon: "error",
+                });
+            }
+            else {
+                getDaysWorked(empId, monthFrom, monthTo);
+                $.ajax({
+                    type: "GET",
+                    url: '../scripts/fetchtableData.php',
+                    data: {
+                        'employeePayroll': 1,
+                        'empId': empId
+                    },
+                    success: function(response){
+                        let result = JSON.parse(response)
+                        if(result.success){
+                            $('#empId').text(empId);
+                            $('#empName').text(result.name)
+                            $('#dept').text(result.department)
+                            $('#pos').text(result.position)
+                            enableInputs()
+                        }
+                        else{
+                            clearFields();
+                            disableInputs();
+                            swal({
+                                title: "Error",
+                                text: 'Employee not found',
+                                icon: "error",
+                            });
+                        }
+                        
+                    },
+                    error: function(xhr, status, error){
+                        console.error(error);
+                    }
+                });
+            }
+        })
+
+        function getDaysWorked(empId, monthFrom, monthTo) {
+            $.ajax({
+                type: "GET",
+                url: '../scripts/fetchtableData.php',
+                data: {
+                    'daysWorked': 1,
+                    'empId': empId,
+                    'dteFrom': monthFrom,
+                    'dteTo': monthTo
+                },
+                success: function(response){
+                    let result = JSON.parse(response)
+                    if(result.success){
+                        $('#daysWorked').val(result.days_worked)
+                    }
+                    else{
+                    }
+                    
+                },
+                error: function(xhr, status, error){
+                    console.error(error);
+                }
+            });
+        }
+
+        $('#btnCompute').click(function(){
+            var grossPay;
+            var basicSalary = $('#basicSalary').val();
+            var daysWorked = $('#daysWorked').val();
+            var overTime = $('#overTime').val();
+            var holidayPay = $('#holidayPay').val();
+            var allowance = $('#allowance').val();
+            console.log(basicSalary * daysWorked)
+
+            if(basicSalary < 1 || daysWorked < 1){
+                return
+            }
+            else {
+                grossPay = parseFloat(basicSalary * daysWorked)
+
+                if(overTime > 0){
+                    grossPay +=  parseFloat(overTime);
+                }
+
+                if(holidayPay > 0){
+                    grossPay += parseFloat(holidayPay);
+                }
+
+                if(allowance > 0){
+                    grossPay +=  parseFloat(allowance);
+                }
+            }
+            $('#gross').text(grossPay.toFixed(2))
+
+            computeNet(grossPay.toFixed(2))
+        })
+
+        function computeNet(grossPay){
+            var netPay;
+            var sss = $('#sss').val();
+            var pagIbig = $('#pag-ibig').val();
+            var philHealth = $('#philHealth').val();
+            var others = $('#others').val();
+
+            if(!grossPay){
+                return
+            }
+            else {
+                netPay = parseFloat(grossPay)
+
+                if(sss > 0){
+                    netPay -=  parseFloat(sss);
+                }
+
+                if(pagIbig > 0){
+                    netPay -= parseFloat(pagIbig);
+                }
+
+                if(philHealth > 0){
+                    netPay -=  parseFloat(philHealth);
+                }
+
+                if(others > 0){
+                    netPay -=  parseFloat(others);
+                }
+            }
+
+            $('#net').text(netPay.toFixed(2))
+        }
+
+        $('#btnSavePayroll').click(function(){
+            //payment
+            var empId = $('#empId').text();
+            var dateFrom = $('#monthFrom').val();
+            var dateTo = $('#monthTo').val();
+            var basicSalary = $('#basicSalary').val();
+            var daysWorked = $('#daysWorked').val();
+            var overTime = $('#overTime').val();
+            var holidayPay = $('#holidayPay').val();
+            var allowance = $('#allowance').val();
+            
+            //deductions
+            var sss = $('#sss').val();
+            var pagIbig = $('#pag-ibig').val();
+            var philHealth = $('#philHealth').val();
+            var others = $('#others').val();
+
+            //total
+            var gross = $('#gross').text();
+            var net = $('#net').text();
+
+            $.ajax({
+                type: "POST",
+                url: '../scripts/crud.php',
+                data: {
+                    'savePayroll': 1,
+                    'empId': empId, 'basicSalary': basicSalary, 'daysWorked': daysWorked,
+                    'overtimePay': overTime, 'holidayPay': holidayPay, 'allowance': allowance,
+                    'sss': sss, 'pagibig':pagIbig, 'philhealth': philHealth, 'otherDeductions': others,
+                    'grossPay': gross, 'netPay': net, 'dateFrom': dateFrom, 'dateTo': dateTo 
+                },
+                success: function(response){
+                    console.log(response)
+                    let result = JSON.parse(response)
+                    if(result.success){
+                        swal({
+                            title: "Success",
+                            text: 'Payroll Saved!',
+                            icon: "success",
+                        });
+                        clearFields();
+                        disableInputs();
+                    }
+                    else{
+                        swal({
+                            title: "Error",
+                            text: 'Failed to save Payroll',
+                            icon: "error",
+                        });
+                    }
+                },
+                error: function(xhr, status, error){
+                    console.error(error);
+                }
+            });
+
+        })
+
+        function enableInputs(){
+            $('#basicSalary').attr('disabled', false)
+            $('#daysWorked').attr('disabled', false)
+            $('#overTime').attr('disabled', false)
+            $('#holidayPay').attr('disabled', false)
+            $('#allowance').attr('disabled', false)
+            $('#sss').attr('disabled', false)
+            $('#pag-ibig').attr('disabled', false)
+            $('#philHealth').attr('disabled', false)
+            $('#others').attr('disabled', false)
+        }
+
+        function disableInputs(){
+            $('#basicSalary').attr('disabled', true)
+            $('#daysWorked').attr('disabled', true)
+            $('#overTime').attr('disabled', true)
+            $('#holidayPay').attr('disabled', true)
+            $('#allowance').attr('disabled', true)
+            $('#sss').attr('disabled', true)
+            $('#pag-ibig').attr('disabled', true)
+            $('#philHealth').attr('disabled', true)
+            $('#others').attr('disabled', true)
+        }
+
+        $('#btnClearFields').click(function(){
+            clearFields()
+        })
+        
+        function clearFields(){
+            $('#empId').text('')
+            $('#payrollSearch').val('')
+            $('#empName').text('')
+            $('#dept').text('')
+            $('#pos').text('')
+            $('#basicSalary').val('');
+            $('#daysWorked').val('');
+            $('#overTime').val('');
+            $('#holidayPay').val('');
+            $('#allowance').val('');
+            $('#sss').val('');
+            $('#pag-ibig').val('');
+            $('#philHealth').val('');
+            $('#others').val('');
+            $('#gross').text('')
+            $('#net').text('')
+            $('#payrollSearch').text('')
+            disableInputs();
+        }
+    </script>
+</html>

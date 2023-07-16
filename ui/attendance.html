@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>BiggieTalk</title>
+        <meta charset="utf-8">
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <meta content="utf-8" http-equiv="encoding">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+        <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <link rel="stylesheet" href="../css/dashboard.css">
+    </head>
+    <body>
+        <div class="vertical-center">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-auto align-middle">
+                        <h2><img src="../images/logo.jpg" alt="Logo" style="width:45px;height:45px;display:inline"> BiggieTalk Attendance</h2>
+                        <div class="input-group">
+                            <input id="searchAttendance" type="search" class="form-control rounded" placeholder="Search Employee by Id" aria-label="Search" aria-describedby="search-addon" />
+                            <button id="btnSearchTime" type="button" class="btn btn-primary"><i class="fa fa-search"></i></button>
+                            <!-- <label id="labelForm" class="form-control">Date: </label> -->
+                            <!-- <input class="form-control" id="datepicker" type="text" placeholder="Date: yyyy-mm-dd"> -->
+                        </div>
+                        <table id="tblAttendance" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Emp ID</th>
+                                    <th>Name</th>
+                                    <th>Time-In</th>
+                                    <th>Time-out</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                startDate: '-3d'
+            });
+
+            $('#birthday').datepicker({
+                format: 'yyyy-mm-dd',
+                startDate: '-3d'
+            });
+
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var yyyy = today.getFullYear();
+            today = yyyy + '-' + mm + '-' + dd;
+            $('#datepicker').val(today);
+            $('#birthday').val(today)
+
+            //loadData();
+        });
+
+        // function loadData() {
+        //     var date = $('#datepicker').val();
+        //     $.ajax({
+        //         type: "GET",
+        //         url: '../scripts/fetchtableData.php',
+        //         data: {
+        //             'dashboardDataLoad': 1,
+        //             'dte': date
+        //         },
+        //         success: function(response){
+        //             presentCount(date);
+        //             absentCount(date);
+        //             if(response) {
+        //                 $('#tblDashboard tbody').empty();
+        //                 $("#tblDashboard tbody").append(response);
+        //             } else {
+        //                 console.log("Failed to Load data")
+        //             }
+        //         },
+        //         error: function(XMLHttpRequest, textStatus, errorThrown) {
+        //             alert(textStatus);
+        //         }
+        //     });
+        // }
+
+        $('#btnSearchTime').click(function(){
+            var id = $('#searchAttendance').val();
+            $.ajax({
+                type: "GET",
+                url: '../scripts/fetchtableData.php',
+                data: {
+                    'searchEmployeeAttendance': 1,
+                    'empId': id
+                },
+                success: function(response){
+                    $('#tblAttendance tbody').empty();
+                    if(response) {
+                        $("#tblAttendance tbody").append(response);
+                        $('#timeFrom').datetimepicker({
+                            use24hours: true,
+                            format: 'yyyy-mm-dd HH:MM:ss'
+                        });
+                        $('#timeTo').datetimepicker({
+                            use24hours: true,
+                            format: 'yyyy-mm-dd HH:MM:ss'
+                        });
+                        $('#btimTimeIn').click(function() {
+                            timeIn(id);
+                        })
+                        $('#btimTimeOut').click(function() {
+                            timeOut(id);
+                        })
+                    } else {
+                        console.log("Failed to Load data")
+                    }
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert(textStatus);
+                }
+            });
+        })
+        function timeIn(empId){
+            var timeIn = $('#timeFrom').val();
+            var getDate = timeIn.split(' ');
+            var dte = getDate[0];
+            $.ajax({
+                type: "POST",
+                url: '../scripts/crud.php',
+                data: {
+                    'timeIn': 1,
+                    'empId': empId,
+                    'timeFrom': timeIn,
+                    'dte': dte
+                },
+                success: function(response){
+				//console.log(JSON.stringify(response))
+                    let result = JSON.parse(response)
+                    if(result.success) {
+                       swal({
+                           title: "Success",
+                           text: result.message,
+                           icon: "success",
+                       });
+                       $('#btnSearchTime').click();
+                    } else {
+                       swal({
+                           title: "Error",
+                           text: result.message,
+                           icon: "error",
+                       });
+                    }
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert(textStatus);
+                }
+            })            
+        }
+
+        function timeOut(empId){
+            var timeTo = $('#timeTo').val();
+            var getDate = timeTo.split(' ');
+            var dte = getDate[0];
+            $.ajax({
+                type: "POST",
+                url: '../scripts/crud.php',
+                data: {
+                    'timeOut': 1,
+                    'empId': empId,
+                    'timeTo': timeTo,
+                    'dte': dte
+                },
+                success: function(response){
+                    let result = JSON.parse(response)
+                    if(result.success) {
+                        getHoursWorked(empId, dte)
+                        //loadEmpData();
+                    } else {
+                        swal({
+                            title: "Error",
+                            text: result.message,
+                            icon: "error",
+                        });
+                    }
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert(textStatus);
+                }
+            })            
+        }
+
+        function getHoursWorked(empId, dte){
+            $.ajax({
+                type: "POST",
+                url: '../scripts/crud.php',
+                data: {
+                    'hoursWorked': 1,
+                    'empId': empId,
+                    'dte': dte
+                },
+                success: function(response){
+                    let result = JSON.parse(response)
+                    if(result.success) {
+                        swal({
+                            title: "Success",
+                            text: result.message,
+                            icon: "success",
+                        });
+                        $('#btnSearchTime').click();
+                    } else {
+                        swal({
+                            title: "Error",
+                            text: result.message,
+                            icon: "error",
+                        });
+                    }
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert(textStatus);
+                }
+            })            
+        }
+    </script>
+</html>

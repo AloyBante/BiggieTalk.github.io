@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>BiggieTalk</title>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="main">
+    <div id="wrapper">
+      <!-- Sidebar -->
+      <nav class="navbar navbar-inverse fixed-top" id="sidebar-wrapper" role="navigation">
+        <ul class="nav sidebar-nav">
+          <div class="sidebar-header">
+            <div class="sidebar-brand">
+              <a href="index.html"><img src="../images/logo-2.jpg" alt="Logo" style="width:45px;height:45px;display:inline">BiggieTalk Admin</a>
+            </div>
+          </div>
+          <li><a onclick="loadUI('../ui/dashboard.html')" href="#"><i class="fa fa-tachometer"></i> Dashboard</a></li>
+          <li><a onclick="loadUI('../ui/attendance.html')" href="#"><i class="fa fa-clock-o"></i> Attendance</a></li>
+          <li><a onclick="loadUI('../ui/payroll.html')" href="#"><i class="fa fa-cc-mastercard"></i> Payroll</a></li>
+          <li><a onclick="logOut()" href="#"><i class="fa fa-sign-out"></i> Logout</a></li>
+        </ul>
+          </nav>
+      <!-- /#sidebar-wrapper -->
+
+      <!-- Page Content -->
+      <div id="page-content-wrapper">
+        <button id="" type="button" class="hamburger animated fadeInLeft is-closed" data-toggle="offcanvas">
+          <span class="hamb-top"></span>
+          <span class="hamb-middle"></span>
+          <span class="hamb-bottom"></span>
+         </button>
+      </div>
+      <!-- /#page-content-wrapper -->
+      <div class="container">
+        <div class="vertical-center">
+          <div class="row justify-content-center">
+            <div class="col-lg-12 align-middle">
+              <iframe id="uiFrame" src="../ui/dashboard.html" frameborder="0" allowfullscreen></iframe>
+             </div>
+           </div>
+         </div>
+       </div>
+      
+  </div>
+  <!-- /#wrapper -->
+  </div>
+</body>
+
+<script>
+  var isUserLoggedIn = false;
+  $(document).ready(function($){
+    
+    initDb();
+    initLogin();
+    // var userCredentials = window.localStorage.getItem('userName');
+    // console.log(isUserLoggedIn)
+    // if(userCredentials != ''){
+    //   isUserLoggedIn = true
+    // }
+
+    if(!isUserLoggedIn) {
+      loadSignIn();
+    }
+    else {
+      var trigger = $('.hamburger'),
+      overlay = $('.overlay'),
+      isClosed = false;
+      
+      trigger.click(function () {
+        hamburger_cross();
+      });
+      
+      function hamburger_cross() {
+        if (isClosed == true) {
+          overlay.hide();
+          trigger.removeClass('is-open');
+          trigger.addClass('is-closed');
+          isClosed = false;
+        }
+        else {
+          overlay.show();
+          trigger.removeClass('is-closed');
+          trigger.addClass('is-open');
+          isClosed = true;
+        }
+      }
+      
+      $('[data-toggle="offcanvas"]').click(function () {
+        $('#wrapper').toggleClass('toggled');
+      });
+    }
+  });
+
+  function initDb(){
+    $.ajax({
+      type: "POST",
+      url: '../scripts/dbConnect.php',
+      success: function(response){
+        let result = JSON.parse(response)
+        if(result.success) {
+          createTables()
+        }
+      },
+      error: function(xhr, status, error){
+        console.error(response);
+      }
+    });
+  }
+
+  function createTables(){
+    $.ajax({
+      type: "POST",
+      url: '../scripts/createTables.php',
+      success: function(response){
+        let result = JSON.parse(response)
+        if(result.success) {
+          console.log(result.message);
+        }
+      },
+      error: function(xhr, status, error){
+        console.error(response);
+      }
+    });
+  }
+
+  function initLogin(){
+    var userCredentials = window.localStorage.getItem('userName');
+    if (userCredentials){
+      isUserLoggedIn = true
+    }
+    else {
+      isUserLoggedIn = false
+    }
+  }
+  
+  function loadUI(src){
+    document.getElementById('uiFrame').src = src
+  }
+  
+  function loadSignIn(){
+    window.location.href = '../ui/login.html'
+  }
+
+  function logOut(){
+    localStorage.removeItem("userName");
+    loadSignIn();
+  }
+</script>
+</html>
